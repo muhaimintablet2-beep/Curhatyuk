@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-slate-900 text-slate-100">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CurhatYuk! - Teman Dengar & Curahan Hati Aman</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fdf4ff',
+              100: '#fae8ff',
+              500: '#d946ef',
+              600: '#c026d3',
+              700: '#a21caf',
+              900: '#581c87',
+            },
+            calm: {
+              800: '#1e1b2e',
+              900: '#13111c',
+              950: '#0b0914',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Custom scrollbar and glassmorphism styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(168, 85, 247, 0.3);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(168, 85, 247, 0.6);
+    }
+    .glass-card {
+      background: rgba(30, 27, 46, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-input {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .glass-input:focus {
+      border-color: #c026d3;
+      outline: none;
+      box-shadow: 0 0 15px rgba(192, 38, 211, 0.25);
+    }
+    .gradient-post-1 { background: linear-gradient(135deg, rgba(88, 28, 135, 0.4), rgba(30, 27, 46, 0.8)); }
+    .gradient-post-2 { background: linear-gradient(135deg, rgba(153, 27, 27, 0.3), rgba(30, 27, 46, 0.8)); }
+    .gradient-post-3 { background: linear-gradient(135deg, rgba(30, 58, 138, 0.3), rgba(30, 27, 46, 0.8)); }
+    .gradient-post-4 { background: linear-gradient(135deg, rgba(6, 78, 59, 0.3), rgba(30, 27, 46, 0.8)); }
+  </style>
+</head>
+
+<body class="h-full bg-calm-950 text-slate-100 flex flex-col font-sans selection:bg-brand-500 selection:text-white antialiased overflow-x-hidden">
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-40 w-full glass-card border-b border-white/10 px-4 py-3">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      
+      <!-- Logo & Tagline -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchFeedTab('all')">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-brand-500/30">
+          <i class="fa-solid fa-heart-pulse text-white text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold bg-gradient-to-r from-brand-500 via-purple-300 to-indigo-300 bg-clip-text text-transparent">
+            CurhatYuk!
+          </h1>
+          <p class="text-[10px] text-purple-300/70 tracking-wide font-medium">Ruang Safe Space & Server Teman Dengar</p>
+        </div>
+      </div>
+
+      <!-- Quick Search -->
+      <div class="hidden md:flex items-center space-x-3 flex-1 max-w-md mx-6">
+        <div class="relative w-full">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+          <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Cari topik curhat atau nama teman..." class="w-full glass-input text-xs rounded-full pl-9 pr-4 py-2 text-slate-200 placeholder-slate-400 focus:ring-1 focus:ring-brand-500 transition" />
+        </div>
+      </div>
+
+      <!-- User Profile & Action Bar -->
+      <div class="flex items-center space-x-3">
+        <button onclick="openAffirmationModal()" class="px-3 py-1.5 rounded-full bg-purple-900/40 border border-purple-500/30 text-purple-200 hover:bg-purple-800/50 text-xs font-medium flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-sparkles text-yellow-400"></i>
+          <span class="hidden sm:inline">Afirmasi Hari Ini</span>
+        </button>
+
+        <button onclick="toggleAudioPlayer()" id="audioToggleBtn" class="p-2 rounded-full bg-slate-800 border border-white/10 text-slate-300 hover:text-white hover:bg-slate-700 transition" title="Suara Relaksasi Hujan">
+          <i class="fa-solid fa-cloud-rain text-cyan-400"></i>
+        </button>
+
+        <!-- Auth Status Container -->
+        <div id="authStatusArea" class="flex items-center">
+          <div class="animate-pulse bg-slate-800 h-8 w-24 rounded-full"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container Layout -->
+  <div class="flex-1 max-w-7xl w-full mx-auto px-2 sm:px-4 py-4 flex gap-6">
+
+    <!-- LEFT SIDEBAR: Navigation & Categories -->
+    <aside class="hidden lg:flex flex-col w-64 shrink-0 space-y-4">
+      
+      <!-- Main Nav Menu -->
+      <div class="glass-card rounded-2xl p-4 space-y-1">
+        <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">Navigasi Utama</div>
+        
+        <button onclick="switchFeedTab('all')" id="navTabAll" class="nav-btn active w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition bg-brand-600/20 text-brand-300 border border-brand-500/30">
+          <span class="flex items-center gap-3">
+            <i class="fa-solid fa-earth-asia text-brand-400"></i> Semua Curhat
+          </span>
+          <span id="badgeAllCount" class="text-xs bg-brand-500/20 px-2 py-0.5 rounded-full text-brand-300">0</span>
+        </button>
+
+        <button onclick="switchFeedTab('following')" id="navTabFollowing" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition text-slate-300 hover:bg-white/5 hover:text-white">
+          <span class="flex items-center gap-3">
+            <i class="fa-solid fa-user-group text-emerald-400"></i> Teman Diikuti
+          </span>
+          <span id="badgeFollowingCount" class="text-xs bg-emerald-500/20 px-2 py-0.5 rounded-full text-emerald-300">0</span>
+        </button>
+
+        <button onclick="switchFeedTab('anonymous')" id="navTabAnon" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition text-slate-300 hover:bg-white/5 hover:text-white">
+          <span class="flex items-center gap-3">
+            <i class="fa-solid fa-mask text-purple-400"></i> Curhat Anonim
+          </span>
+        </button>
+
+        <button onclick="openChatModal()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition text-slate-300 hover:bg-white/5 hover:text-white">
+          <span class="flex items-center gap-3">
+            <i class="fa-solid fa-comments text-cyan-400"></i> Bilik Dengar (PM)
+          </span>
+        </button>
+
+        <button onclick="showMyProfileModal()" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition text-slate-300 hover:bg-white/5 hover:text-white">
+          <span class="flex items-center gap-3">
+            <i class="fa-solid fa-user text-amber-400"></i> Profil Saya
+          </span>
+        </button>
+      </div>
+
+      <!-- Mood Category Filter -->
+      <div class="glass-card rounded-2xl p-4 space-y-2">
+        <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider px-1 mb-2">Kategori Perasaan</div>
+        <div class="flex flex-col space-y-1" id="categorySidebarList">
+          <!-- Dynamic Categories -->
+        </div>
+      </div>
+
+      <!-- Quick Vent Button -->
+      <button onclick="openCreatePostModal()" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-semibold shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2 transition transform active:scale-95">
+        <i class="fa-solid fa-feather-pointed text-lg"></i>
+        <span>Tulis Curhat Baru</span>
+      </button>
+
+    </aside>
+
+    <!-- MIDDLE COLUMN: Post Composer & Feed -->
+    <main class="flex-1 min-w-0 space-y-4">
+
+      <!-- Mobile Top Navigation Pill -->
+      <div class="flex lg:hidden overflow-x-auto gap-2 pb-2 no-scrollbar">
+        <button onclick="switchFeedTab('all')" id="mNavAll" class="px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap bg-brand-600/30 border border-brand-500/50 text-brand-200">
+          Semua Curhat
+        </button>
+        <button onclick="switchFeedTab('following')" id="mNavFollowing" class="px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap bg-slate-800 text-slate-300 border border-white/10">
+          Teman Diikuti
+        </button>
+        <button onclick="switchFeedTab('anonymous')" id="mNavAnon" class="px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap bg-slate-800 text-slate-300 border border-white/10">
+          Curhat Anonim
+        </button>
+      </div>
+
+      <!-- Quick Post Input Trigger Box -->
+      <div class="glass-card rounded-2xl p-4 transition border border-white/10 hover:border-brand-500/40">
+        <div class="flex items-center space-x-3">
+          <img id="composerUserAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=CurhatUser" class="w-10 h-10 rounded-full bg-slate-800 border border-purple-500/30 object-cover" alt="Avatar" />
+          <div onclick="openCreatePostModal()" class="flex-1 glass-input rounded-full px-4 py-2.5 text-slate-400 text-xs sm:text-sm cursor-pointer hover:bg-slate-800/80 transition flex items-center justify-between">
+            <span>Apa yang sedang mengganjal di hatimu? Curhatkan di sini...</span>
+            <i class="fa-regular fa-paper-plane text-brand-400"></i>
+          </div>
+        </div>
+        <div class="flex items-center justify-between mt-3 pt-3 border-t border-white/5 text-xs text-slate-400">
+          <button onclick="openCreatePostModal('anon')" class="hover:text-purple-300 flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-user-ninja text-purple-400"></i> Kirim Secara Anonim
+          </button>
+          <button onclick="openCreatePostModal()" class="hover:text-brand-300 flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-heart text-pink-400"></i> Butuh Saran / Saling Dengar
+          </button>
+        </div>
+      </div>
+
+      <!-- Feed Filter Header -->
+      <div class="flex items-center justify-between px-1">
+        <h2 id="feedTitleHeading" class="text-base font-semibold text-slate-200 flex items-center gap-2">
+          <i class="fa-solid fa-fire text-brand-400"></i> Curhat Terbaru Hari Ini (Live Server)
+        </h2>
+        <span id="activeCategoryBadge" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full border border-white/10 hidden">
+          Kategori: <span id="activeCategoryName" class="font-semibold text-brand-300">Semua</span>
+          <i onclick="clearCategoryFilter()" class="fa-solid fa-xmark ml-1.5 cursor-pointer hover:text-red-400"></i>
+        </span>
+      </div>
+
+      <!-- Feed Container -->
+      <div id="postsFeedContainer" class="space-y-4">
+        <div class="text-center py-12 text-slate-400 text-xs space-y-2">
+          <i class="fa-solid fa-circle-notch fa-spin text-brand-400 text-2xl"></i>
+          <p>Menghubungkan ke server database CurhatYuk...</p>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- RIGHT SIDEBAR: Profile Card & Suggested Friends -->
+    <aside class="hidden xl:flex flex-col w-72 shrink-0 space-y-4">
+
+      <!-- Current User Mini Profile Card -->
+      <div class="glass-card rounded-2xl p-4 text-center relative overflow-hidden">
+        <div class="h-16 bg-gradient-to-r from-brand-900 to-indigo-900 rounded-xl mb-8 -mx-1 -mt-1 opacity-70"></div>
+        <div class="absolute top-6 left-1/2 -translate-x-1/2">
+          <img id="sidebarUserAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=CurhatUser" class="w-16 h-16 rounded-full border-2 border-brand-500 bg-slate-900 shadow-lg object-cover" alt="User" />
+        </div>
+
+        <h3 id="sidebarUserName" class="text-base font-bold text-white mt-2">Teman Curhat</h3>
+        <p id="sidebarUserTag" class="text-xs text-purple-300/70 mb-3">@temancurhat</p>
+        <p id="sidebarUserBio" class="text-xs text-slate-300 italic mb-4">"Mendengar tanpa menghakimi, berbagi tanpa takut."</p>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-3 gap-2 py-2 border-y border-white/10 text-xs">
+          <div>
+            <div id="statPostsCount" class="font-bold text-white">0</div>
+            <div class="text-[10px] text-slate-400">Curhat</div>
+          </div>
+          <div>
+            <div id="statFollowersCount" class="font-bold text-white">0</div>
+            <div class="text-[10px] text-slate-400">Pengikut</div>
+          </div>
+          <div>
+            <div id="statFollowingCount" class="font-bold text-white">0</div>
+            <div class="text-[10px] text-slate-400">Diikuti</div>
+          </div>
+        </div>
+
+        <button onclick="showMyProfileModal()" class="w-full mt-3 py-1.5 rounded-xl border border-white/20 text-xs font-medium text-slate-200 hover:bg-white/10 transition">
+          Edit Profil & Mood
+        </button>
+      </div>
+
+      <!-- Suggested Friends to Follow -->
+      <div class="glass-card rounded-2xl p-4">
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Teman Siap Mendengar</h4>
+          <i class="fa-solid fa-users text-brand-400 text-xs"></i>
+        </div>
+
+        <div id="suggestedUsersList" class="space-y-3">
+          <!-- Suggested Users inserted by JS -->
+        </div>
+      </div>
+
+      <!-- Ambient Sound Relax Player Card -->
+      <div class="glass-card rounded-2xl p-4 border border-cyan-500/20 bg-gradient-to-br from-cyan-950/30 to-purple-950/30">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-medium text-cyan-300 flex items-center gap-1.5">
+            <i class="fa-solid fa-headphones"></i> Relaxation Ambient
+          </span>
+          <span id="audioStatusTag" class="text-[10px] bg-cyan-950 text-cyan-400 px-2 py-0.5 rounded-full border border-cyan-800">Mati</span>
+        </div>
+        <p class="text-xs text-slate-300 mb-3">Putar suara gemericik hujan & gelombang tenang untuk menemani saat membaca atau menulis curhat.</p>
+        <button onclick="toggleAudioPlayer()" id="sidebarAudioBtn" class="w-full py-2 bg-cyan-600/30 hover:bg-cyan-600/50 border border-cyan-500/40 text-cyan-200 text-xs rounded-xl font-medium transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-play"></i> Putar Suara Hujan
+        </button>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <div class="lg:hidden fixed bottom-0 left-0 right-0 glass-card border-t border-white/10 z-40 px-4 py-2 flex items-center justify-around">
+    <button onclick="switchFeedTab('all')" class="flex flex-col items-center text-slate-400 hover:text-brand-400">
+      <i class="fa-solid fa-house text-lg"></i>
+      <span class="text-[10px]">Beranda</span>
+    </button>
+    <button onclick="switchFeedTab('following')" class="flex flex-col items-center text-slate-400 hover:text-brand-400">
+      <i class="fa-solid fa-user-group text-lg"></i>
+      <span class="text-[10px]">Teman</span>
+    </button>
+    
+    <button onclick="openCreatePostModal()" class="w-12 h-12 rounded-full bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center shadow-lg -mt-5 border-4 border-calm-950">
+      <i class="fa-solid fa-pen-nib text-lg"></i>
+    </button>
+
+    <button onclick="openChatModal()" class="flex flex-col items-center text-slate-400 hover:text-cyan-400">
+      <i class="fa-solid fa-comments text-lg"></i>
+      <span class="text-[10px]">Bilik Chat</span>
+    </button>
+    <button onclick="showMyProfileModal()" class="flex flex-col items-center text-slate-400 hover:text-amber-400">
+      <i class="fa-solid fa-user text-lg"></i>
+      <span class="text-[10px]">Profil</span>
+    </button>
+  </div>
+
+  <!-- MODALS CONTAINER -->
+
+  <!-- 1. Google Login & Quick Auth Modal -->
+  <div id="loginModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-card max-w-md w-full rounded-3xl p-6 sm:p-8 relative border border-purple-500/30 text-center space-y-6">
+      <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="w-16 h-16 rounded-3xl bg-gradient-to-tr from-brand-600 to-indigo-600 mx-auto flex items-center justify-center shadow-lg shadow-brand-500/40">
+        <i class="fa-solid fa-heart-pulse text-white text-3xl"></i>
+      </div>
+
+      <div>
+        <h3 class="text-xl font-bold text-white">Masuk ke CurhatYuk!</h3>
+        <p class="text-xs text-slate-300 mt-1">Sambungkan akun Google untuk menyimpan curhat & riwayat obrolanmu di server.</p>
+      </div>
+
+      <!-- Real Google Sign In Button -->
+      <button onclick="loginWithGoogle()" class="w-full py-3 px-4 rounded-2xl bg-white hover:bg-slate-100 text-slate-800 font-semibold text-sm flex items-center justify-center gap-3 transition shadow-lg border border-slate-200">
+        <svg class="w-5 h-5" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <span>Masuk dengan Akun Google</span>
+      </button>
+
+      <div class="relative my-4">
+        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-white/10"></div></div>
+        <div class="relative flex justify-center text-[11px] uppercase"><span class="bg-slate-900 px-2 text-slate-400">Atau Gunakan Mode Tamu</span></div>
+      </div>
+
+      <!-- Quick Guest Account Setup -->
+      <div class="space-y-3">
+        <input type="text" id="quickNameInput" placeholder="Masukkan nama panggilanmu..." class="w-full glass-input rounded-xl px-4 py-2.5 text-xs text-white" />
+        <button onclick="loginWithGuest()" class="w-full py-2.5 rounded-xl bg-purple-900/50 hover:bg-purple-800/60 border border-purple-500/30 text-purple-200 text-xs font-semibold transition">
+          Lanjut Sebagai Tamu Anonim
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Modal Tulis Curhat Baru -->
+  <div id="createPostModal" class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-card max-w-xl w-full rounded-3xl p-6 relative border border-brand-500/30 space-y-4">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-feather-pointed text-brand-400"></i> Tuangkan Curahan Hatimu
+        </h3>
+        <button onclick="closeModal('createPostModal')" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Post Category Selector -->
+      <div>
+        <label class="block text-xs font-medium text-slate-300 mb-1.5">Pilih Kategori Topik Curhat:</label>
+        <div class="flex flex-wrap gap-2" id="modalCategoryPills"></div>
+      </div>
+
+      <!-- Content Textarea -->
+      <div>
+        <textarea id="postContentInput" rows="5" placeholder="Ceritakan apa saja yang mengganjal... Ceritamu tersimpan aman di server..." class="w-full glass-input rounded-2xl p-4 text-xs sm:text-sm text-slate-100 placeholder-slate-400 focus:ring-1 focus:ring-brand-500 transition resize-none"></textarea>
+      </div>
+
+      <!-- Theme Selector -->
+      <div>
+        <label class="block text-xs font-medium text-slate-300 mb-1.5">Pilih Suasana Kartu Curhat:</label>
+        <div class="flex items-center gap-3">
+          <button type="button" onclick="selectPostBg('gradient-post-1')" class="w-8 h-8 rounded-full gradient-post-1 border-2 border-white/40 focus:border-brand-400 focus:scale-110 transition"></button>
+          <button type="button" onclick="selectPostBg('gradient-post-2')" class="w-8 h-8 rounded-full gradient-post-2 border-2 border-white/40 focus:border-brand-400 focus:scale-110 transition"></button>
+          <button type="button" onclick="selectPostBg('gradient-post-3')" class="w-8 h-8 rounded-full gradient-post-3 border-2 border-white/40 focus:border-brand-400 focus:scale-110 transition"></button>
+          <button type="button" onclick="selectPostBg('gradient-post-4')" class="w-8 h-8 rounded-full gradient-post-4 border-2 border-white/40 focus:border-brand-400 focus:scale-110 transition"></button>
+        </div>
+      </div>
+
+      <!-- Options (Anonymous toggle) & Submit -->
+      <div class="flex items-center justify-between pt-2">
+        <label class="flex items-center gap-2 cursor-pointer text-xs text-purple-300 select-none">
+          <input type="checkbox" id="anonPostCheckbox" class="rounded bg-slate-800 border-white/20 text-brand-500 focus:ring-0" />
+          <span><i class="fa-solid fa-mask"></i> Kirim secara Anonim</span>
+        </label>
+
+        <button onclick="submitNewPost()" id="btnSubmitPost" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-semibold text-xs shadow-lg transition flex items-center gap-2">
+          <span>Bagikan Curhat</span>
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Modal Edit Profil -->
+  <div id="profileModal" class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-card max-w-md w-full rounded-3xl p-6 relative border border-white/10 space-y-4">
+      <button onclick="closeModal('profileModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <h3 class="text-base font-bold text-white border-b border-white/10 pb-2">Profil & Status Perasaan</h3>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Nama Tampilan</label>
+          <input type="text" id="profileNameInput" class="w-full glass-input rounded-xl px-3 py-2 text-xs text-white" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Username (@)</label>
+          <input type="text" id="profileHandleInput" class="w-full glass-input rounded-xl px-3 py-2 text-xs text-white" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Bio / Kalimat Penguat</label>
+          <textarea id="profileBioInput" rows="2" class="w-full glass-input rounded-xl px-3 py-2 text-xs text-white resize-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Pilih Avatar Sesuai Perasaan:</label>
+          <div class="grid grid-cols-5 gap-2" id="avatarPickerGrid"></div>
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <button onclick="saveUserProfile()" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs transition">
+          Simpan Profil ke Server
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Modal Daily Affirmation -->
+  <div id="affirmationModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-card max-w-md w-full rounded-3xl p-6 text-center space-y-5 border border-purple-500/40 relative">
+      <button onclick="closeModal('affirmationModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="w-12 h-12 rounded-2xl bg-yellow-500/20 text-yellow-400 mx-auto flex items-center justify-center text-2xl border border-yellow-500/30">
+        <i class="fa-solid fa-sun"></i>
+      </div>
+
+      <div>
+        <span class="text-[10px] font-bold uppercase tracking-wider text-purple-300 bg-purple-950 px-3 py-1 rounded-full border border-purple-800">
+          Afirmasi & Peluk Hangat Hari Ini
+        </span>
+      </div>
+
+      <p id="affirmationText" class="text-sm sm:text-base font-medium text-slate-100 leading-relaxed italic px-2">
+        "Kamu sudah melakukan yang terbaik hari ini. Tidak apa-apa merasa lelah dan butuh istirahat."
+      </p>
+
+      <button onclick="generateRandomAffirmation()" class="w-full py-2.5 rounded-xl bg-purple-900/60 hover:bg-purple-800/80 border border-purple-500/40 text-purple-200 text-xs font-semibold transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-arrows-rotate"></i> Afirmasi Lainnya
+      </button>
+    </div>
+  </div>
+
+  <!-- 5. Modal Bilik Dengar (Private Chat PM) -->
+  <div id="chatModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4 hidden">
+    <div class="glass-card max-w-2xl w-full h-[550px] rounded-3xl flex flex-col border border-cyan-500/30 overflow-hidden">
+      <!-- Chat Header -->
+      <div class="p-4 bg-slate-900/80 border-b border-white/10 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <img id="chatTargetAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Friend" class="w-9 h-9 rounded-full bg-slate-800 border border-cyan-500/30 object-cover" />
+          <div>
+            <h4 id="chatTargetName" class="text-sm font-bold text-white">Bilik Dengar (Obrolan Privat)</h4>
+            <p id="chatTargetStatus" class="text-[10px] text-cyan-300">Tersambung Real-time ke Server</p>
+          </div>
+        </div>
+        <button onclick="closeModal('chatModal')" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Chat Messages Body -->
+      <div id="chatMessagesArea" class="flex-1 p-4 overflow-y-auto space-y-3 text-xs"></div>
+
+      <!-- Chat Input Area -->
+      <div class="p-3 bg-slate-900/90 border-t border-white/10 flex items-center gap-2">
+        <input type="text" id="chatInputMessage" onkeypress="handleChatKeyPress(event)" placeholder="Ketik pesan privat penguat hati..." class="flex-1 glass-input rounded-xl px-4 py-2.5 text-xs text-white" />
+        <button onclick="sendPrivateChatMessage()" class="p-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white transition">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast Container -->
+  <div id="toastContainer" class="fixed bottom-16 right-4 lg:bottom-6 lg:right-6 z-50 space-y-2 pointer-events-none"></div>
+
+  <!-- FIREBASE MODULE & APPLICATION LOGIC -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { 
+      getAuth, 
+      signInAnonymously, 
+      signInWithCustomToken, 
+      GoogleAuthProvider, 
+      signInWithPopup, 
+      signOut, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { 
+      getFirestore, 
+      doc, 
+      getDoc, 
+      setDoc, 
+      updateDoc, 
+      onSnapshot, 
+      collection, 
+      addDoc 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Application ID and Firebase Config
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'curhat-yuk-app';
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+      apiKey: "AIzaSyDummyKeyForDemoPurposesOnly",
+      authDomain: "curhatyuk.firebaseapp.com",
+      projectId: "curhatyuk-app",
+      storageBucket: "curhatyuk-app.appspot.com",
+      messagingSenderId: "1234567890",
+      appId: "1:1234567890:web:abcdef123456"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    /* ==========================================================================
+       APP STATE & LOCAL CACHE
+       ========================================================================== */
+
+    const CATEGORIES = [
+      { id: 'all', name: 'Semua Topic', icon: 'fa-cubes', color: 'text-brand-400' },
+      { id: 'asmara', name: 'Asmara & Galau', icon: 'fa-heart-crack', color: 'text-rose-400' },
+      { id: 'karir', name: 'Karir & Pekerjaan', icon: 'fa-briefcase', color: 'text-blue-400' },
+      { id: 'kuliah', name: 'Sekolah & Kuliah', icon: 'fa-graduation-cap', color: 'text-amber-400' },
+      { id: 'keluarga', name: 'Keluarga & Rumah', icon: 'fa-house-chimney-window', color: 'text-emerald-400' },
+      { id: 'mental', name: 'Kesehatan Mental', icon: 'fa-brain', color: 'text-purple-400' },
+      { id: 'random', name: 'Santai & Random', icon: 'fa-comments', color: 'text-cyan-400' }
+    ];
+
+    const AFFIRMATIONS = [
+      "Kamu sudah bertahan sejauh ini, dan itu sangat mengagumkan. Beri dirimu apresiasi malam ini.",
+      "Tidak apa-apa jika merasa lelah. Mengaku butuh istirahat bukan tanda kelemahan, melainkan keberanian.",
+      "Akan selalu ada telinga yang mau mendengar dan hati yang siap merangkulmu tanpa penghakiman.",
+      "Perasaan sedih atau bingungmu itu valid. Jangan terlalu keras menuntut dirimu sempurna.",
+      "Badai ini pasti berlalu. Selangkah demi selangkah, kamu akan menemukan kedamaianmu kembali."
+    ];
+
+    let currentUser = {
+      uid: 'guest_user',
+      name: 'Teman Curhat',
+      handle: 'temancurhat',
+      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=CurhatUserMain',
+      bio: 'Mendengar tanpa menghakimi, berbagi tanpa takut.',
+      following: [],
+      isGoogle: false
+    };
+
+    let postsData = [];
+    let suggestedUsers = [];
+    let chatMessagesMap = {};
+    let currentTab = 'all'; 
+    let selectedCategory = 'all';
+    let selectedPostBg = 'gradient-post-1';
+    let activeChatUser = null;
+    let audioCtx = null;
+    let rainGainNode = null;
+    let isAudioPlaying = false;
+
+    /* ==========================================================================
+       AUTHENTICATION & FIRESTORE SYNC
+       ========================================================================== */
+
+    async function initServerAuth() {
+      try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+      } catch (e) {
+        console.warn("Falling back to anonymous auth...", e);
+        try { await signInAnonymously(auth); } catch (err) {}
+      }
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser.uid = user.uid;
+        if (user.displayName) currentUser.name = user.displayName;
+        if (user.photoURL) currentUser.avatar = user.photoURL;
+        if (user.email) currentUser.isGoogle = true;
+
+        // Sync Profile Document from Firestore
+        await loadOrInitUserProfile(user);
+        
+        // Subscribe to live posts feed & chats
+        subscribeToPostsFeed();
+        subscribeToUsersList();
+        subscribeToChats();
+      }
+      renderAuthStatus();
+      renderUserProfileCards();
+    });
+
+    async function loadOrInitUserProfile(user) {
+      if (!user) return;
+      try {
+        const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', user.uid);
+        const snap = await getDoc(userRef);
+        if (snap.exists()) {
+          const data = snap.data();
+          currentUser.name = data.name || currentUser.name;
+          currentUser.handle = data.handle || currentUser.handle;
+          currentUser.avatar = data.avatar || currentUser.avatar;
+          currentUser.bio = data.bio || currentUser.bio;
+          currentUser.following = data.following || [];
+        } else {
+          // Create initial user doc
+          await setDoc(userRef, {
+            uid: user.uid,
+            name: currentUser.name,
+            handle: currentUser.handle,
+            avatar: currentUser.avatar,
+            bio: currentUser.bio,
+            following: [],
+            createdAt: Date.now()
+          });
+        }
+      } catch (err) {
+        console.error("User profile sync error:", err);
+      }
+    }
+
+    // Real-time Firestore Listeners
+    function subscribeToPostsFeed() {
+      if (!auth.currentUser) return;
+      const postsCol = collection(db, 'artifacts', appId, 'public', 'data', 'posts');
+      
+      onSnapshot(postsCol, (snapshot) => {
+        const items = [];
+        snapshot.forEach((docSnap) => {
+          items.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        // Sort in memory by timestamp descending
+        items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        postsData = items;
+        renderPosts();
+        renderUserProfileCards();
+      }, (error) => {
+        console.error("Firestore posts subscription error:", error);
+      });
+    }
+
+    function subscribeToUsersList() {
+      if (!auth.currentUser) return;
+      const usersCol = collection(db, 'artifacts', appId, 'public', 'data', 'users');
+      
+      onSnapshot(usersCol, (snapshot) => {
+        const list = [];
+        snapshot.forEach((docSnap) => {
+          if (docSnap.id !== currentUser.uid) {
+            list.push({ id: docSnap.id, ...docSnap.data() });
+          }
+        });
+        suggestedUsers = list;
+        renderSuggestedUsers();
+      }, (err) => console.error("Users sync error:", err));
+    }
+
+    function subscribeToChats() {
+      if (!auth.currentUser) return;
+      const chatsCol = collection(db, 'artifacts', appId, 'public', 'data', 'chats');
+      
+      onSnapshot(chatsCol, (snapshot) => {
+        const map = {};
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          if (data.participants && data.participants.includes(currentUser.uid)) {
+            const partnerId = data.participants.find(p => p !== currentUser.uid) || 'system';
+            if (!map[partnerId]) map[partnerId] = [];
+            map[partnerId].push(data);
+          }
+        });
+
+        // Sort messages chronologically
+        Object.keys(map).forEach(partner => {
+          map[partner].sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+        });
+
+        chatMessagesMap = map;
+        if (activeChatUser) renderChatMessages();
+      }, (err) => console.error("Chats sync error:", err));
+    }
+
+    /* ==========================================================================
+       GOOGLE LOGIN & AUTH HANDLERS
+       ========================================================================== */
+
+    window.loginWithGoogle = async function() {
+      try {
+        showToast('Membuka jendela login Google...', 'info');
+        const provider = new GoogleAuthProvider();
+        const result = await signInWithPopup(auth, provider);
+        const gUser = result.user;
+
+        currentUser.uid = gUser.uid;
+        currentUser.name = gUser.displayName || 'Teman Google';
+        currentUser.handle = (gUser.displayName || 'user').toLowerCase().replace(/\s+/g, '_');
+        currentUser.avatar = gUser.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${gUser.uid}`;
+        currentUser.isGoogle = true;
+
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', gUser.uid), {
+          uid: gUser.uid,
+          name: currentUser.name,
+          handle: currentUser.handle,
+          avatar: currentUser.avatar,
+          bio: currentUser.bio,
+          following: currentUser.following,
+          createdAt: Date.now()
+        }, { merge: true });
+
+        closeModal('loginModal');
+        renderAuthStatus();
+        renderUserProfileCards();
+        showToast(`Berhasil tersambung dengan Google sebagai ${currentUser.name}! ✨`);
+      } catch (err) {
+        console.error("Google Auth error:", err);
+        showToast('Login Google dibatalkan atau tidak didukung di frame ini. Gunakan mode akun tamu.', 'error');
+      }
+    };
+
+    window.loginWithGuest = async function() {
+      const nameInput = document.getElementById('quickNameInput').value.trim();
+      if (nameInput) {
+        currentUser.name = nameInput;
+        currentUser.handle = nameInput.toLowerCase().replace(/\s+/g, '');
+        currentUser.avatar = 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + nameInput;
+
+        if (auth.currentUser) {
+          await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', auth.currentUser.uid), {
+            uid: auth.currentUser.uid,
+            name: currentUser.name,
+            handle: currentUser.handle,
+            avatar: currentUser.avatar,
+            bio: currentUser.bio,
+            following: currentUser.following,
+            createdAt: Date.now()
+          }, { merge: true });
+        }
+      }
+      closeModal('loginModal');
+      renderAuthStatus();
+      renderUserProfileCards();
+      showToast(`Masuk sebagai ${currentUser.name}`);
+    };
+
+    /* ==========================================================================
+       POSTS CREATION & REACTIONS (FIRESTORE WRITES)
+       ========================================================================== */
+
+    window.submitNewPost = async function() {
+      const content = document.getElementById('postContentInput').value.trim();
+      if (!content) {
+        showToast('Tuliskan sedikit curahan hatimu terlebih dahulu.', 'error');
+        return;
+      }
+
+      if (!auth.currentUser) {
+        showToast('Menghubungkan ke server...', 'error');
+        return;
+      }
+
+      const isAnon = document.getElementById('anonPostCheckbox').checked;
+      const catVal = document.querySelector('input[name="postCategoryRadio"]:checked')?.value || 'random';
+      const catObj = CATEGORIES.find(c => c.id === catVal);
+
+      const btn = document.getElementById('btnSubmitPost');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+
+      try {
+        const postsCol = collection(db, 'artifacts', appId, 'public', 'data', 'posts');
+        await addDoc(postsCol, {
+          userId: auth.currentUser.uid,
+          userName: isAnon ? 'Pengguna Anonim' : currentUser.name,
+          userHandle: isAnon ? 'anonim' : currentUser.handle,
+          userAvatar: isAnon ? 'https://api.dicebear.com/7.x/bottts/svg?seed=' + Date.now() : currentUser.avatar,
+          isAnon: isAnon,
+          category: catVal,
+          categoryName: catObj ? catObj.name : 'Santai',
+          bgStyle: selectedPostBg,
+          content: content,
+          createdAt: Date.now(),
+          timestamp: 'Baru saja',
+          reactions: { peluk: 0, semangat: 0, relate: 0 },
+          userReactions: {},
+          comments: []
+        });
+
+        document.getElementById('postContentInput').value = '';
+        closeModal('createPostModal');
+        showToast('Curhatmu tersimpan di server! Semoga hatimu merasa lega. ✨');
+      } catch (err) {
+        console.error("Error submitting post:", err);
+        showToast('Gagal menyimpan curhat ke server.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Bagikan Curhat</span> <i class="fa-solid fa-paper-plane"></i>';
+      }
+    };
+
+    window.reactToPost = async function(postId, reactionType) {
+      if (!auth.currentUser) return;
+      const post = postsData.find(p => p.id === postId);
+      if (!post) return;
+
+      const myUid = auth.currentUser.uid;
+      const reactions = { ...post.reactions };
+      const userReactions = { ...(post.userReactions || {}) };
+      const previous = userReactions[myUid];
+
+      if (previous === reactionType) {
+        reactions[reactionType] = Math.max(0, (reactions[reactionType] || 0) - 1);
+        delete userReactions[myUid];
+      } else {
+        if (previous) reactions[previous] = Math.max(0, (reactions[previous] || 0) - 1);
+        reactions[reactionType] = (reactions[reactionType] || 0) + 1;
+        userReactions[myUid] = reactionType;
+      }
+
+      try {
+        const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'posts', postId);
+        await updateDoc(postRef, { reactions, userReactions });
+      } catch (err) {
+        console.error("Error updating reactions:", err);
+      }
+    };
+
+    window.addCommentToPost = async function(postId) {
+      const input = document.getElementById(`commentInput_${postId}`);
+      const text = input.value.trim();
+      if (!text || !auth.currentUser) return;
+
+      const post = postsData.find(p => p.id === postId);
+      if (!post) return;
+
+      const newComments = [...(post.comments || []), {
+        id: 'c_' + Date.now(),
+        userId: auth.currentUser.uid,
+        name: currentUser.name,
+        avatar: currentUser.avatar,
+        text: text,
+        createdAt: Date.now()
+      }];
+
+      try {
+        const postRef = doc(db, 'artifacts', appId, 'public', 'data', 'posts', postId);
+        await updateDoc(postRef, { comments: newComments });
+        input.value = '';
+        showToast('Dukungan hatimu dikirim ke server!');
+      } catch (err) {
+        console.error("Error commenting:", err);
+      }
+    };
+
+    window.toggleFollowUser = async function(targetUserId) {
+      if (!auth.currentUser) return;
+      const following = [...currentUser.following];
+      const index = following.indexOf(targetUserId);
+
+      if (index > -1) {
+        following.splice(index, 1);
+        showToast('Batal mengikuti pengguna.');
+      } else {
+        following.push(targetUserId);
+        showToast('Berhasil ikuti teman! Curhat mereka akan diprioritaskan.');
+      }
+
+      currentUser.following = following;
+      try {
+        const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', auth.currentUser.uid);
+        await updateDoc(userRef, { following });
+        renderUserProfileCards();
+        renderSuggestedUsers();
+        renderPosts();
+      } catch (err) {
+        console.error("Error updating follows:", err);
+      }
+    };
+
+    /* ==========================================================================
+       UI RENDERING FUNCTIONS
+       ========================================================================== */
+
+    function renderAuthStatus() {
+      const container = document.getElementById('authStatusArea');
+      container.innerHTML = `
+        <div class="flex items-center space-x-2 bg-slate-800/80 hover:bg-slate-800 border ${currentUser.isGoogle ? 'border-brand-500' : 'border-white/10'} px-2.5 py-1 rounded-full cursor-pointer transition" onclick="${currentUser.isGoogle ? 'showMyProfileModal()' : 'openLoginModal()'}">
+          <img src="${currentUser.avatar}" class="w-7 h-7 rounded-full object-cover border border-brand-400" />
+          <span class="text-xs font-semibold text-slate-200 hidden sm:inline max-w-[100px] truncate">${currentUser.name}</span>
+          ${currentUser.isGoogle ? '<i class="fa-solid fa-circle-check text-brand-400 text-[10px]"></i>' : '<i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>'}
+        </div>
+      `;
+    }
+
+    function renderUserProfileCards() {
+      document.getElementById('composerUserAvatar').src = currentUser.avatar;
+      document.getElementById('sidebarUserAvatar').src = currentUser.avatar;
+      document.getElementById('sidebarUserName').innerText = currentUser.name;
+      document.getElementById('sidebarUserTag').innerText = `@${currentUser.handle}`;
+      document.getElementById('sidebarUserBio').innerText = `"${currentUser.bio}"`;
+
+      const myPostsCount = postsData.filter(p => p.userId === currentUser.uid && !p.isAnon).length;
+      document.getElementById('statPostsCount').innerText = myPostsCount;
+      document.getElementById('statFollowersCount').innerText = suggestedUsers.filter(u => u.following && u.following.includes(currentUser.uid)).length;
+      document.getElementById('statFollowingCount').innerText = currentUser.following.length;
+
+      document.getElementById('badgeAllCount').innerText = postsData.length;
+      document.getElementById('badgeFollowingCount').innerText = postsData.filter(p => currentUser.following.includes(p.userId)).length;
+    }
+
+    function renderCategorySidebar() {
+      const container = document.getElementById('categorySidebarList');
+      container.innerHTML = CATEGORIES.map(cat => {
+        const isActive = selectedCategory === cat.id;
+        return `
+          <button onclick="filterByCategory('${cat.id}')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition ${isActive ? 'bg-brand-600/30 text-brand-200 border border-brand-500/30' : 'text-slate-300 hover:bg-white/5 hover:text-white'}">
+            <span class="flex items-center gap-2.5">
+              <i class="fa-solid ${cat.icon} ${cat.color}"></i> ${cat.name}
+            </span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function renderModalCategoryPills() {
+      const container = document.getElementById('modalCategoryPills');
+      container.innerHTML = CATEGORIES.filter(c => c.id !== 'all').map((cat, idx) => `
+        <label class="cursor-pointer">
+          <input type="radio" name="postCategoryRadio" value="${cat.id}" ${idx === 0 ? 'checked' : ''} class="peer sr-only" />
+          <span class="px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-white/10 peer-checked:bg-brand-600 peer-checked:text-white peer-checked:border-brand-400 transition inline-block">
+            <i class="fa-solid ${cat.icon} mr-1"></i> ${cat.name}
+          </span>
+        </label>
+      `).join('');
+    }
+
+    function renderSuggestedUsers() {
+      const container = document.getElementById('suggestedUsersList');
+      if (suggestedUsers.length === 0) {
+        container.innerHTML = `<p class="text-[11px] text-slate-400 italic">Mencari teman aktif di server...</p>`;
+        return;
+      }
+
+      container.innerHTML = suggestedUsers.slice(0, 5).map(usr => {
+        const isFollowing = currentUser.following.includes(usr.id);
+        return `
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center space-x-2 min-w-0">
+              <img src="${usr.avatar || 'https://api.dicebear.com/7.x/bottts/svg?seed=' + usr.id}" class="w-8 h-8 rounded-full bg-slate-800 shrink-0 object-cover" />
+              <div class="truncate">
+                <div class="text-xs font-semibold text-slate-200 truncate">${usr.name || 'Teman Curhat'}</div>
+                <div class="text-[10px] text-slate-400 truncate">@${usr.handle || 'user'}</div>
+              </div>
+            </div>
+            <button onclick="toggleFollowUser('${usr.id}')" class="shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold transition ${isFollowing ? 'bg-slate-800 text-slate-300 border border-white/20' : 'bg-brand-600 hover:bg-brand-500 text-white shadow-sm'}">
+              ${isFollowing ? 'Diikuti' : 'Ikuti'}
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.renderPosts = function() {
+      const feedContainer = document.getElementById('postsFeedContainer');
+      let filtered = [...postsData];
+
+      if (currentTab === 'following') {
+        filtered = filtered.filter(p => currentUser.following.includes(p.userId) || p.userId === currentUser.uid);
+      } else if (currentTab === 'anonymous') {
+        filtered = filtered.filter(p => p.isAnon);
+      }
+
+      if (selectedCategory !== 'all') {
+        filtered = filtered.filter(p => p.category === selectedCategory);
+      }
+
+      if (filtered.length === 0) {
+        feedContainer.innerHTML = `
+          <div class="glass-card rounded-2xl p-8 text-center space-y-3">
+            <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mx-auto text-slate-400 text-xl">
+              <i class="fa-regular fa-comment-dots"></i>
+            </div>
+            <h4 class="text-sm font-bold text-slate-200">Belum Ada Curhat di Sini</h4>
+            <p class="text-xs text-slate-400 max-w-sm mx-auto">Jadilah yang pertama membagikan cerita. Tersimpan langsung di server cloud.</p>
+            <button onclick="openCreatePostModal()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-semibold">
+              Tulis Curhat Sekarang
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      feedContainer.innerHTML = filtered.map(post => {
+        const isFollowing = currentUser.following.includes(post.userId);
+        const myReaction = post.userReactions ? post.userReactions[currentUser.uid] : null;
+        const timeAgo = formatTimeAgo(post.createdAt);
+
+        return `
+          <div class="glass-card rounded-2xl p-4 sm:p-5 ${post.bgStyle || 'gradient-post-1'} transition duration-200 space-y-3">
+            
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <img src="${post.isAnon ? 'https://api.dicebear.com/7.x/bottts/svg?seed=' + post.id : post.userAvatar}" class="w-10 h-10 rounded-full bg-slate-900 border border-white/20 object-cover" />
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-slate-100">${post.userName}</span>
+                    ${post.isAnon ? '<span class="text-[9px] bg-purple-950 text-purple-300 border border-purple-800 px-2 py-0.2 rounded-full"><i class="fa-solid fa-mask"></i> Anonim</span>' : ''}
+                  </div>
+                  <div class="text-[10px] text-slate-400 flex items-center gap-2">
+                    <span>${post.isAnon ? '@anonim' : '@' + post.userHandle}</span>
+                    <span>•</span>
+                    <span>${timeAgo}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center space-x-2">
+                ${!post.isAnon && post.userId !== currentUser.uid ? `
+                  <button onclick="toggleFollowUser('${post.userId}')" class="text-xs px-2.5 py-1 rounded-full border border-white/20 hover:bg-white/10 text-slate-200 transition">
+                    ${isFollowing ? '<i class="fa-solid fa-user-check text-emerald-400"></i> Diikuti' : '<i class="fa-solid fa-user-plus text-brand-400"></i> Ikuti'}
+                  </button>
+                  <button onclick="openChatWithUser('${post.userId}', '${post.userName}', '${post.userAvatar}')" class="p-1.5 text-slate-400 hover:text-cyan-300 transition" title="Kirim Pesan Privat">
+                    <i class="fa-solid fa-paper-plane text-sm"></i>
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+
+            <p class="text-xs sm:text-sm text-slate-100 leading-relaxed whitespace-pre-line font-normal">
+              ${escapeHtml(post.content || '')}
+            </p>
+
+            <div class="pt-1">
+              <span class="inline-block text-[10px] bg-white/10 text-purple-200 px-2.5 py-0.5 rounded-full border border-white/10 font-medium">
+                #${post.categoryName || 'Curhat'}
+              </span>
+            </div>
+
+            <!-- Reactions Bar -->
+            <div class="flex items-center justify-between border-t border-white/10 pt-3 text-xs">
+              <div class="flex items-center gap-1 sm:gap-2">
+                
+                <button onclick="reactToPost('${post.id}', 'peluk')" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full transition ${myReaction === 'peluk' ? 'bg-pink-600/40 text-pink-200 border border-pink-400' : 'bg-slate-800/60 hover:bg-slate-800 text-slate-300'}">
+                  <span>🤗</span>
+                  <span class="text-[11px] font-medium">${post.reactions?.peluk || 0}</span>
+                </button>
+
+                <button onclick="reactToPost('${post.id}', 'semangat')" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full transition ${myReaction === 'semangat' ? 'bg-amber-600/40 text-amber-200 border border-amber-400' : 'bg-slate-800/60 hover:bg-slate-800 text-slate-300'}">
+                  <span>💪</span>
+                  <span class="text-[11px] font-medium">${post.reactions?.semangat || 0}</span>
+                </button>
+
+                <button onclick="reactToPost('${post.id}', 'relate')" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full transition ${myReaction === 'relate' ? 'bg-purple-600/40 text-purple-200 border border-purple-400' : 'bg-slate-800/60 hover:bg-slate-800 text-slate-300'}">
+                  <span>🥺</span>
+                  <span class="text-[11px] font-medium">${post.reactions?.relate || 0}</span>
+                </button>
+
+              </div>
+
+              <button onclick="toggleCommentsView('${post.id}')" class="text-slate-300 hover:text-white flex items-center gap-1.5 text-xs">
+                <i class="fa-regular fa-comment"></i>
+                <span>${(post.comments || []).length} Dukungan</span>
+              </button>
+            </div>
+
+            <!-- Comment Expandable Section -->
+            <div id="commentsSection_${post.id}" class="space-y-3 pt-2 hidden border-t border-white/5">
+              <div class="flex items-center gap-2">
+                <input type="text" id="commentInput_${post.id}" placeholder="Tulis kata penyemangat..." class="flex-1 glass-input rounded-xl px-3 py-1.5 text-xs text-white" />
+                <button onclick="addCommentToPost('${post.id}')" class="px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold transition">
+                  Kirim
+                </button>
+              </div>
+
+              <div class="space-y-2">
+                ${(post.comments || []).map(c => `
+                  <div class="flex items-start space-x-2 bg-slate-900/60 p-2.5 rounded-xl border border-white/5">
+                    <img src="${c.avatar || 'https://api.dicebear.com/7.x/bottts/svg?seed=comm'}" class="w-6 h-6 rounded-full bg-slate-800 mt-0.5 object-cover" />
+                    <div class="flex-1">
+                      <div class="text-[11px] font-bold text-brand-300">${c.name || 'Teman'}</div>
+                      <div class="text-xs text-slate-200">${escapeHtml(c.text || '')}</div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+          </div>
+        `;
+      }).join('');
+    };
+
+    /* ==========================================================================
+       PRIVATE CHAT LOGIC (BILIK DENGAR)
+       ========================================================================== */
+
+    window.openChatModal = function() {
+      const targetId = currentUser.following[0] || (suggestedUsers[0] ? suggestedUsers[0].id : 'system');
+      const friend = suggestedUsers.find(u => u.id === targetId) || { name: 'Teman Dengar', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Friend' };
+      openChatWithUser(targetId, friend.name, friend.avatar);
+    };
+
+    window.openChatWithUser = function(userId, userName, userAvatar) {
+      activeChatUser = userId;
+      document.getElementById('chatTargetName').innerText = userName || 'Bilik Dengar';
+      if (userAvatar) {
+        document.getElementById('chatTargetAvatar').src = userAvatar;
+      }
+
+      renderChatMessages();
+      openModal('chatModal');
+    };
+
+    function renderChatMessages() {
+      const container = document.getElementById('chatMessagesArea');
+      const messages = chatMessagesMap[activeChatUser] || [];
+
+      if (messages.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-slate-400 text-xs italic">
+            Belum ada pesan privat. Mulai sapa dan saling menguatkan!
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = messages.map(m => {
+        const isMe = m.senderId === auth.currentUser?.uid;
+        return `
+          <div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
+            <div class="max-w-[75%] p-3 rounded-2xl ${isMe ? 'bg-brand-600 text-white rounded-br-none' : 'bg-slate-800 text-slate-200 border border-white/10 rounded-bl-none'} space-y-1">
+              <p>${escapeHtml(m.text)}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    window.handleChatKeyPress = function(e) {
+      if (e.key === 'Enter') sendPrivateChatMessage();
+    };
+
+    window.sendPrivateChatMessage = async function() {
+      const input = document.getElementById('chatInputMessage');
+      const text = input.value.trim();
+      if (!text || !activeChatUser || !auth.currentUser) return;
+
+      try {
+        const chatsCol = collection(db, 'artifacts', appId, 'public', 'data', 'chats');
+        await addDoc(chatsCol, {
+          participants: [auth.currentUser.uid, activeChatUser],
+          senderId: auth.currentUser.uid,
+          text: text,
+          createdAt: Date.now()
+        });
+
+        input.value = '';
+      } catch (err) {
+        console.error("Error sending message:", err);
+      }
+    };
+
+    /* ==========================================================================
+       AUDIO SYNTHESIZER (CALMING RAIN)
+       ========================================================================== */
+
+    window.toggleAudioPlayer = function() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+
+      if (isAudioPlaying) {
+        if (rainGainNode) rainGainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+        isAudioPlaying = false;
+        updateAudioBtnState(false);
+        showToast('Suara relaksasi dihentikan.');
+      } else {
+        audioCtx.resume();
+        startRainSound();
+        isAudioPlaying = true;
+        updateAudioBtnState(true);
+        showToast('Suara relaksasi hujan dimainkan. Hirup napas dalam-dalam...');
+      }
+    };
+
+    function startRainSound() {
+      const bufferSize = audioCtx.sampleRate * 2;
+      const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+
+      const whiteNoise = audioCtx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      whiteNoise.loop = true;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(800, audioCtx.currentTime);
+
+      rainGainNode = audioCtx.createGain();
+      rainGainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+
+      whiteNoise.connect(filter);
+      filter.connect(rainGainNode);
+      rainGainNode.connect(audioCtx.destination);
+
+      whiteNoise.start();
+    }
+
+    function updateAudioBtnState(playing) {
+      const tag = document.getElementById('audioStatusTag');
+      const sideBtn = document.getElementById('sidebarAudioBtn');
+      
+      if (playing) {
+        if (tag) tag.innerText = 'Aktif 🌧️';
+        if (sideBtn) sideBtn.innerHTML = '<i class="fa-solid fa-pause"></i> Hentikan Hujan';
+      } else {
+        if (tag) tag.innerText = 'Mati';
+        if (sideBtn) sideBtn.innerHTML = '<i class="fa-solid fa-play"></i> Putar Suara Hujan';
+      }
+    }
+
+    /* ==========================================================================
+       HELPER FUNCTIONS & CONTROLLERS
+       ========================================================================== */
+
+    window.switchFeedTab = function(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('bg-brand-600/20', 'text-brand-300', 'border', 'border-brand-500/30'));
+      
+      const activeNav = tab === 'all' ? 'navTabAll' : tab === 'following' ? 'navTabFollowing' : 'navTabAnon';
+      document.getElementById(activeNav)?.classList.add('bg-brand-600/20', 'text-brand-300', 'border', 'border-brand-500/30');
+
+      const heading = document.getElementById('feedTitleHeading');
+      if (tab === 'all') heading.innerHTML = '<i class="fa-solid fa-fire text-brand-400"></i> Curhat Terbaru Hari Ini (Live Server)';
+      if (tab === 'following') heading.innerHTML = '<i class="fa-solid fa-user-group text-emerald-400"></i> Curhat Teman Diikuti';
+      if (tab === 'anonymous') heading.innerHTML = '<i class="fa-solid fa-mask text-purple-400"></i> Curhat Anonim Saja';
+
+      renderPosts();
+    };
+
+    window.filterByCategory = function(catId) {
+      selectedCategory = catId;
+      renderCategorySidebar();
+
+      const badge = document.getElementById('activeCategoryBadge');
+      const name = document.getElementById('activeCategoryName');
+
+      if (catId !== 'all') {
+        const catObj = CATEGORIES.find(c => c.id === catId);
+        name.innerText = catObj.name;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+
+      renderPosts();
+    };
+
+    window.clearCategoryFilter = function() {
+      filterByCategory('all');
+    };
+
+    window.selectPostBg = function(bgClass) {
+      selectedPostBg = bgClass;
+    };
+
+    window.openCreatePostModal = function(type) {
+      if (type === 'anon') {
+        document.getElementById('anonPostCheckbox').checked = true;
+      }
+      openModal('createPostModal');
+    };
+
+    window.openLoginModal = function() {
+      openModal('loginModal');
+    };
+
+    window.showMyProfileModal = function() {
+      document.getElementById('profileNameInput').value = currentUser.name;
+      document.getElementById('profileHandleInput').value = currentUser.handle;
+      document.getElementById('profileBioInput').value = currentUser.bio;
+
+      const seeds = ['CurhatUserMain', 'Sinta', 'Dika', 'Maya', 'Rizky', 'HappySoul', 'CalmHeart', 'Penyabar', 'Bintang', 'Bunga'];
+      const grid = document.getElementById('avatarPickerGrid');
+      grid.innerHTML = seeds.map(s => {
+        const url = `https://api.dicebear.com/7.x/avataaars/svg?seed=${s}`;
+        return `
+          <img src="${url}" onclick="selectProfileAvatar('${url}')" class="w-12 h-12 rounded-full border-2 border-transparent hover:border-brand-500 cursor-pointer bg-slate-800 object-cover" />
+        `;
+      }).join('');
+
+      openModal('profileModal');
+    };
+
+    window.selectProfileAvatar = function(url) {
+      currentUser.avatar = url;
+      showToast('Avatar dipilih!');
+    };
+
+    window.saveUserProfile = async function() {
+      currentUser.name = document.getElementById('profileNameInput').value.trim() || currentUser.name;
+      currentUser.handle = document.getElementById('profileHandleInput').value.trim() || currentUser.handle;
+      currentUser.bio = document.getElementById('profileBioInput').value.trim() || currentUser.bio;
+
+      if (auth.currentUser) {
+        try {
+          const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', auth.currentUser.uid);
+          await setDoc(userRef, {
+            name: currentUser.name,
+            handle: currentUser.handle,
+            bio: currentUser.bio,
+            avatar: currentUser.avatar
+          }, { merge: true });
+        } catch (e) {
+          console.error("Profile save error:", e);
+        }
+      }
+
+      closeModal('profileModal');
+      renderAuthStatus();
+      renderUserProfileCards();
+      showToast('Profil berhasil disimpan di server!');
+    };
+
+    window.openAffirmationModal = function() {
+      generateRandomAffirmation();
+      openModal('affirmationModal');
+    };
+
+    window.generateRandomAffirmation = function() {
+      const rand = AFFIRMATIONS[Math.floor(Math.random() * AFFIRMATIONS.length)];
+      document.getElementById('affirmationText').innerText = `"${rand}"`;
+    };
+
+    window.toggleCommentsView = function(postId) {
+      const el = document.getElementById(`commentsSection_${postId}`);
+      if (el) el.classList.toggle('hidden');
+    };
+
+    window.openModal = function(modalId) {
+      document.getElementById(modalId)?.classList.remove('hidden');
+    };
+
+    window.closeModal = function(modalId) {
+      document.getElementById(modalId)?.classList.add('hidden');
+    };
+
+    window.handleSearch = function(query) {
+      query = query.toLowerCase();
+      if (!query) {
+        renderPosts();
+        return;
+      }
+      const feedContainer = document.getElementById('postsFeedContainer');
+      const filtered = postsData.filter(p => (p.content || '').toLowerCase().includes(query) || (p.userName || '').toLowerCase().includes(query));
+      
+      if (filtered.length === 0) {
+        feedContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Tidak ada curhat yang cocok dengan pencarian "${escapeHtml(query)}".</p>`;
+      } else {
+        const backup = postsData;
+        postsData = filtered;
+        renderPosts();
+        postsData = backup;
+      }
+    };
+
+    window.showToast = function(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      
+      toast.className = `pointer-events-auto px-4 py-2.5 rounded-xl text-xs font-medium text-white shadow-xl flex items-center gap-2 border border-white/10 transition transform translate-y-2 opacity-0 bg-slate-800`;
+      toast.innerHTML = `
+        <i class="fa-solid ${type === 'error' ? 'fa-circle-exclamation text-rose-400' : 'fa-circle-check text-emerald-400'}"></i>
+        <span>${escapeHtml(message)}</span>
+      `;
+
+      container.appendChild(toast);
+      setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
+      setTimeout(() => {
+        toast.classList.add('opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    };
+
+    function escapeHtml(str) {
+      return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    function formatTimeAgo(timestamp) {
+      if (!timestamp) return 'Baru saja';
+      const diffSec = Math.floor((Date.now() - timestamp) / 1000);
+      if (diffSec < 60) return 'Baru saja';
+      if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m lalu`;
+      if (diffSec < 86400) return `${Math.floor(diffSec / 3600)}j lalu`;
+      return `${Math.floor(diffSec / 86400)}h lalu`;
+    }
+
+    // App Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      renderCategorySidebar();
+      renderModalCategoryPills();
+      initServerAuth();
+    });
+  </script>
+</body>
+</html>
